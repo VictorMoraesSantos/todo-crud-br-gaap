@@ -16,7 +16,6 @@ namespace task_crud.Infrastructure
             services.AddDbContext(configuration);
             services.AddRepositories(configuration);
             services.AddServices(configuration);
-            services.AddHttpClient();
             return services;
         }
 

@@ -6,8 +6,6 @@ namespace task_crud.Domain.Repositories
     {
         Task<Todo> GetById(int id);
         Task<IQueryable<Todo>> GetAll(int? page, int? pageSize, string? title, string? sort, string? order);
-        Task<int> GetCount(string? title);
-        Task Create(Todo taskItem);
         Task Update(Todo taskItem);
         Task Delete(int id);
         Task CreateRange(IEnumerable<Todo> taskItems);

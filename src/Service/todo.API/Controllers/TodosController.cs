@@ -1,22 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Text.Json;
 using task_crud.Application.Contracts;
 using task_crud.Application.DTOs;
 
 namespace task_crud.API.Controllers
 {
     [ApiController]
-    [Route("todos")]
+    [Route("api/todos")]
     public class TodosController : ControllerBase
     {
         private readonly ITodoService _service;
-        private readonly IHttpClientFactory _httpClientFactory;
 
-        public TodosController(ITodoService service, IHttpClientFactory httpClientFactory)
+        public TodosController(ITodoService service)
         {
             _service = service;
-            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -30,12 +26,16 @@ namespace task_crud.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var item = await _service.GetByIdAsync(id);
+            if (item == null) return NotFound();
             return Ok(item);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateCompleted([FromRoute] int id, [FromBody] UpdateTodoDTO taskItem)
         {
+            if (taskItem == null) return BadRequest("Request body is required.");
+            if (string.IsNullOrWhiteSpace(taskItem.Title)) return BadRequest("Title is required.");
+
             var result = await _service.UpdateAsync(id, taskItem);
             return result ? NoContent() : NotFound();
         }
@@ -43,21 +43,8 @@ namespace task_crud.API.Controllers
         [HttpPost("sync")]
         public async Task<IActionResult> Sync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var resp = await client.GetAsync("https://jsonplaceholder.typicode.com/todos");
-            if (!resp.IsSuccessStatusCode) return StatusCode((int)resp.StatusCode);
-
-            using var stream = await resp.Content.ReadAsStreamAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var external = await JsonSerializer.DeserializeAsync<IEnumerable<ExternalTodo>>(stream, options);
-            if (external == null) return NoContent();
-
-            var createDtos = external.Select(e => new CreateTodoDTO(e.id, e.userId, e.title ?? string.Empty, e.completed));
-            await _service.CreateRangeAsync(createDtos);
-
+            await _service.SyncAsync();
             return NoContent();
         }
-
-        private record ExternalTodo(int userId, int id, string title, bool completed);
     }
 }

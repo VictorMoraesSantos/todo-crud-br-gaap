@@ -5,4 +5,7 @@
     <Project Path="src/Service/todo.Domain/todo.Domain.csproj" />
     <Project Path="src/Service/todo.Infrastructure/todo.Infrastructure.csproj" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

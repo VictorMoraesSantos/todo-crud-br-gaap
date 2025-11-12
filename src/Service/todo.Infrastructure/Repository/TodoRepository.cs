@@ -14,12 +14,6 @@ namespace task_crud.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task Create(Todo taskItem)
-        {
-            await _context.Todos.AddAsync(taskItem);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task CreateRange(IEnumerable<Todo> taskItems)
         {
             await _context.Todos.AddRangeAsync(taskItems);
@@ -75,18 +69,6 @@ namespace task_crud.Infrastructure.Repository
         {
             _context.Todos.Update(taskItem);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<int> GetCount(string? title)
-        {
-            var query = _context.Todos.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                query = query.Where(i => i.Title != null && i.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
-            }
-
-            return await query.CountAsync();
         }
     }
 }

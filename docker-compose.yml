@@ -1,0 +1,9 @@
+services:
+  todo.api:
+    image: ${DOCKER_REGISTRY-}todoapi
+    build:
+      context: .
+      dockerfile: src/Service/todo.API/Dockerfile
+
+volumes:
+  mssql_data:
