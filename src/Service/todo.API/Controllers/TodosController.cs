@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using task_crud.Application.Contracts;
 using task_crud.Application.DTOs;
+using todo.Domain.Exception;
 
 namespace task_crud.API.Controllers
 {
@@ -33,11 +34,16 @@ namespace task_crud.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateCompleted([FromRoute] int id, [FromBody] UpdateTodoDTO taskItem)
         {
-            if (taskItem == null) return BadRequest("Request body is required.");
-            if (string.IsNullOrWhiteSpace(taskItem.Title)) return BadRequest("Title is required.");
+            try
+            {
 
-            var result = await _service.UpdateAsync(id, taskItem);
-            return result ? NoContent() : NotFound();
+                var result = await _service.UpdateAsync(id, taskItem);
+                return NoContent();
+            }
+            catch (DomainException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("sync")]

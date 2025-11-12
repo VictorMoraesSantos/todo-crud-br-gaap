@@ -6,6 +6,8 @@ using task_crud.Domain.Repositories;
 using System.Text.Json;
 using System.Linq;
 using System.Net.Http;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using todo.Domain.Exception;
 
 namespace task_crud.Infrastructure.Services
 {
@@ -53,7 +55,14 @@ namespace task_crud.Infrastructure.Services
         public async Task<bool> UpdateAsync(int id, UpdateTodoDTO dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            if (string.IsNullOrWhiteSpace(dto.Title)) throw new ArgumentException("Title is required.", nameof(dto));
+
+            if (!dto.Completed)
+            {
+                var existing = await _repository.GetByUserId(dto.UserId);
+                var count = existing.Count(e => e.Completed);
+                if (count > 5)
+                    throw new DomainException("O máximo de tarefas incompletas por usuário é 5.");
+            }
 
             var entity = await _repository.GetById(id);
             if (entity == null) return false;
@@ -71,29 +80,21 @@ namespace task_crud.Infrastructure.Services
         public async Task SyncAsync()
         {
             using var client = new HttpClient();
-            var resp = await client.GetAsync("https://jsonplaceholder.typicode.com/todos");
 
+            var resp = await client.GetAsync("https://jsonplaceholder.typicode.com/todos");
             if (!resp.IsSuccessStatusCode) return;
 
             await using var stream = await resp.Content.ReadAsStreamAsync();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var dtos = await JsonSerializer.DeserializeAsync<IEnumerable<TodoDTO?>>(stream, options);
-
+            var dtos = await JsonSerializer.DeserializeAsync<IEnumerable<TodoDTO?>>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (dtos == null) return;
 
             var validDtos = dtos
-                .Where(d => d != null && !string.IsNullOrWhiteSpace(d.Title))
-                .Select(d => d!)
+                .Where(d => d != null)
                 .ToList();
 
             if (validDtos.Count == 0) return;
 
-            // Use the service's CreateRangeAsync to keep mapping responsibility in the service layer
             await CreateRangeAsync(validDtos);
         }
     }

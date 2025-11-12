@@ -33,13 +33,9 @@ namespace task_crud.Infrastructure.Repository
         {
             var query = _context.Todos.AsNoTracking();
 
-            // Filter by title
             if (!string.IsNullOrWhiteSpace(title))
-            {
                 query = query.Where(i => i.Title != null && i.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
-            }
 
-            // Sort
             if (!string.IsNullOrWhiteSpace(sort))
             {
                 if (sort.Equals("title", StringComparison.OrdinalIgnoreCase))
@@ -48,14 +44,10 @@ namespace task_crud.Infrastructure.Repository
                         ? query.OrderByDescending(i => i.Title)
                         : query.OrderBy(i => i.Title);
                 }
-                // Add more sort fields if needed
             }
 
-            // Paginate if page and pageSize are provided
             if (page.HasValue && pageSize.HasValue && page.Value > 0 && pageSize.Value > 0)
-            {
                 query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
-            }
 
             return query;
         }
@@ -63,6 +55,11 @@ namespace task_crud.Infrastructure.Repository
         public async Task<Todo> GetById(int id)
         {
             return await _context.Todos.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<Todo>> GetByUserId(int id)
+        {
+            return await _context.Todos.AsNoTracking().Where(t => t.UserId == id).ToListAsync();
         }
 
         public async Task Update(Todo taskItem)

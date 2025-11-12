@@ -4,13 +4,10 @@ using task_crud.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS policy for development - allow all for ease of development (do NOT use in production)
 const string devCorsPolicy = "DevAllowAll";
 builder.Services.AddCors(options =>
 {
@@ -24,12 +21,10 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    // Enable CORS in development
     app.UseCors(devCorsPolicy);
 }
 
