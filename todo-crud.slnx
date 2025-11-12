@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Service/">
+    <Project Path="src/Service/todo.API/todo.API.csproj" />
+    <Project Path="src/Service/todo.Application/todo.Application.csproj" />
+    <Project Path="src/Service/todo.Domain/todo.Domain.csproj" />
+    <Project Path="src/Service/todo.Infrastructure/todo.Infrastructure.csproj" />
+  </Folder>
+</Solution>
