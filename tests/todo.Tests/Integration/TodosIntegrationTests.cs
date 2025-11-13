@@ -50,11 +50,11 @@ namespace todo.Tests.Integration
         [InlineData(2, 20)]
         public async Task GetAll_ShouldReturnPagedResults(int page, int pageSize)
         {
-            //Act
+            //Arrange
             var response = await _client.GetAsync($"/api/todos?page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            //Arrrange
+            //Act
             var result = await response.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
 
             //Assert
@@ -68,11 +68,11 @@ namespace todo.Tests.Integration
         [InlineData("laboriosam")]
         public async Task GetAll_ShouldFilterByTitle(string filter)
         {
-            //Act
+            //Arrange
             var response = await _client.GetAsync($"/api/todos?title={filter}");
             response.EnsureSuccessStatusCode();
 
-            //Arrrange
+            //Act
             var result = await response.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
 
             //Assert
@@ -86,11 +86,11 @@ namespace todo.Tests.Integration
         [InlineData(3)]
         public async Task GetAll_ShouldFilterById(int filter)
         {
-            //Act
+            //Arrange
             var response = await _client.GetAsync($"/api/todos?id={filter}");
             response.EnsureSuccessStatusCode();
 
-            //Arrrange
+            //Act
             var result = await response.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
 
             //Assert
@@ -104,11 +104,11 @@ namespace todo.Tests.Integration
         [InlineData(3)]
         public async Task GetAll_ShouldFilterByUserId(int filter)
         {
-            //Act
+            //Arrange
             var response = await _client.GetAsync($"/api/todos?userid={filter}");
             response.EnsureSuccessStatusCode();
 
-            //Arrrange
+            //Act
             var result = await response.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
 
             //Assert
@@ -119,33 +119,37 @@ namespace todo.Tests.Integration
         [Fact]
         public async Task Put_ShouldRespectIncompleteLimit()
         {
+            //Arrange
             int userId = 1;
             await _client.PostAsync("/api/todos/sync", null);
-
+            
+            //Act
             var getResponse = await _client.GetAsync($"/api/todos?page=1&pageSize=100");
             var result = await getResponse.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
             var todos = result.Items.Where(t => t.UserId == userId && t.Completed == false).Take(6).ToList();
-
             foreach (var todo in todos.Take(5))
                 await _client.PutAsJsonAsync($"/api/todos/{todo.Id}", new UpdateTodoDTO(userId, todo.Title, false));
-
             var response = await _client.PutAsJsonAsync($"/api/todos/{todos[5].Id}", new UpdateTodoDTO(userId, todos[5].Title, false));
+
+            //Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task Put_ShouldUpdateCompletedStatus()
         {
+            //Arrange
             int userId = 1;
             await _client.PostAsync("/api/todos/sync", null);
 
+            //Act
             var getResponse = await _client.GetAsync($"/api/todos?page=1&pageSize=100");
             var result = await getResponse.Content.ReadFromJsonAsync<PagedResult<TodoDTO>>();
             var todo = result.Items.First(t => t.UserId == userId);
-
             await _client.PutAsJsonAsync($"/api/todos/{todo.Id}", new UpdateTodoDTO(userId, todo.Title, true));
-
             var updated = await (await _client.GetAsync($"/api/todos/{todo.Id}")).Content.ReadFromJsonAsync<TodoDTO>();
+            
+            //Assert
             Assert.True(updated.Completed);
         }
     }
