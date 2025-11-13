@@ -4,10 +4,10 @@ Aplicação para gerenciamento de tarefas (ToDo) com backend em .NET 9 e frontend 
 
 ## Endpoints principais (API)
 
-- `GET /api/tasks` — Lista todas as tarefas
-- `GET /api/tasks/{id}` — Busca uma tarefa pelo ID
-- `POST /api/tasks/sync` — Carrega tarefas de uma fonte externa
-- `PUT /api/tasks/{id}` — Atualiza uma tarefa existente
+- `GET /api/todos` — Lista todas as tarefas
+- `GET /api/todos/{id}` — Busca uma tarefa pelo ID
+- `POST /api/todos/sync` — Carrega tarefas de uma fonte externa
+- `PUT /api/todos/{id}` — Atualiza uma tarefa existente
 
 ## Paginação e Filtros de Busca
 
@@ -26,7 +26,7 @@ A API suporta paginação e filtros nos endpoints de listagem:
 **Exemplo de requisição com paginação e filtro:**
 
 ```
-GET /api/tasks?page=2&pageSize=5&title=importante&sort=title&order=desc
+GET /api/todos?page=2&pageSize=5&title=importante&sort=title&order=desc
 ```
 
 Esse exemplo retorna a segunda página, com 5 tarefas por página, filtrando pelo título "importante" e ordenando pelo título de forma decrescente.
@@ -47,7 +47,7 @@ Esse exemplo retorna a segunda página, com 5 tarefas por página, filtrando pelo 
     docker compose up --build
     ```
 
-A API estará disponível em `http://localhost:6001`.
+A API estará disponível em `https://localhost:6001`.
 
 ## Como executar o frontend
 

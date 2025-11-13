@@ -4,10 +4,10 @@
     controllerName="todo.controller.TaskList">
 
     <App id="app">
-        <Page title="Task List">
+        <Page title="Todo List">
             <SearchField
                 width="100%"
-                placeholder="Search tasks..."
+                placeholder="Search todos..."
                 liveChange="onSearch" />
 
             <List

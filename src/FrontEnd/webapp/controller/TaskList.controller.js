@@ -10,11 +10,9 @@ sap.ui.define(
     "use strict";
 
     return Controller.extend("todo.controller.TaskList", {
-      onInit: function () {
-        this._loadTasks();
-      },
+      onInit: function () {},
 
-      _loadTasks: function (page = 1, pageSize = 10, title) {
+      _loadTasks: function (page = 1, pageSize = 10, title, showBusy = true) {
         var oModel = this.getView().getModel("tasks");
         if (!oModel) {
           var oComp = this.getOwnerComponent && this.getOwnerComponent();
@@ -32,7 +30,9 @@ sap.ui.define(
           });
           this.getView().setModel(oModel, "tasks");
         }
-        oModel.setProperty("/busy", true);
+        if (showBusy) {
+          oModel.setProperty("/busy", true);
+        }
         oModel.setProperty("/page", page);
         oModel.setProperty("/pageSize", pageSize);
         var url = `/api/todos?page=${page}&pageSize=${pageSize}`;
@@ -86,12 +86,9 @@ sap.ui.define(
                   ? err.status || err.message
                   : "unknown")
             );
-            var sample = [
-              { userId: 1, id: 1, title: "sample task one", completed: false },
-              { userId: 1, id: 2, title: "sample task two", completed: true },
-              { userId: 2, id: 3, title: "another sample", completed: false },
-            ];
-            oModel.setProperty("/tasks", sample);
+            try {
+              oModel.setProperty("/tasks", []);
+            } catch (e) {}
             oModel.setProperty("/busy", false);
           });
       },
