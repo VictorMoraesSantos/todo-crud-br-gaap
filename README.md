@@ -34,9 +34,8 @@ Esse exemplo retorna a segunda página, com 5 tarefas por página, filtrando pelo 
 ## Casos de uso
 
 - Listar tarefas
-- Criar nova tarefa
 - Editar tarefa
-- Excluir tarefa
+- Carregar tarefas de fonte externa
 
 ## Como executar o backend (API) com Docker Compose
 
