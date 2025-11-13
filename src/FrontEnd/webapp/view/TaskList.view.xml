@@ -1,0 +1,46 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    controllerName="todo.controller.TaskList">
+
+    <App id="app">
+        <Page title="Task List">
+            <SearchField
+                width="100%"
+                placeholder="Search tasks..."
+                liveChange="onSearch" />
+
+            <List
+                id="taskList"
+                items="{tasks>/tasks}"
+                busy="{tasks>/busy}"
+                busyIndicatorDelay="0">
+                <items>
+                    <CustomListItem>
+                        <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                            <HBox fitContainer="true" alignItems="Center" width="100%">
+                                <CheckBox selected="{tasks>completed}" select="onToggleCompleted" />
+                                <Text text="{tasks>title}" wrapping="false" class="{= ${tasks>completed} ? 'taskCompleted' : '' }" />
+                            </HBox>
+                            <HBox>
+                                <Text text="{= 'User: ' + ${tasks>userId}}" />
+                                <Button text="Details" press="onDetails" />
+                            </HBox>
+                        </HBox>
+                    </CustomListItem>
+                </items>
+            </List>
+
+            <Toolbar>
+                <Button text="Sync" press="onSync" />
+            </Toolbar>
+
+            <Toolbar design="Transparent" id="paginationToolbar" class="sapUiSmallMarginTop">
+                <Button icon="sap-icon://navigation-left-arrow" press="onPrevPage" />
+                <Text text="{= ${tasks>/tasks}.length + ' items — Página ' + ${tasks>/page} }" />
+                <Button icon="sap-icon://navigation-right-arrow" press="onNextPage" />
+            </Toolbar>
+        </Page>
+    </App>
+
+</mvc:View>

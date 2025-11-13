@@ -59,8 +59,8 @@ namespace task_crud.Infrastructure.Services
             if (!dto.Completed)
             {
                 var existing = await _repository.GetByUserId(dto.UserId);
-                var count = existing.Count(e => e.Completed);
-                if (count > 5)
+                var count = existing.Count(e => !e.Completed);
+                if (count >= 5)
                     throw new DomainException("O máximo de tarefas incompletas por usuário é 5.");
             }
 

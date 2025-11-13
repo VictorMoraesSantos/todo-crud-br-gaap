@@ -34,16 +34,24 @@ namespace task_crud.Infrastructure.Repository
             var query = _context.Todos.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(title))
-                query = query.Where(i => i.Title != null && i.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(i => i.Title != null && i.Title.ToLower().Contains(title.ToLower()));
 
             if (!string.IsNullOrWhiteSpace(sort))
             {
-                if (sort.Equals("title", StringComparison.OrdinalIgnoreCase))
-                {
-                    query = order?.Equals("desc", StringComparison.OrdinalIgnoreCase) == true
+                if (sort.ToLower().Equals("title"))
+                    query = order?.ToLower().Equals("desc") == true
                         ? query.OrderByDescending(i => i.Title)
                         : query.OrderBy(i => i.Title);
-                }
+
+                if (sort.ToLower().Equals("id"))
+                    query = order?.ToLower().Equals("desc") == true
+                        ? query.OrderByDescending(i => i.Id)
+                        : query.OrderBy(i => i.Id);
+
+                if (sort.ToLower().Equals("userid"))
+                    query = order?.ToLower().Equals("desc") == true
+                        ? query.OrderByDescending(i => i.UserId)
+                        : query.OrderBy(i => i.UserId);
             }
 
             if (page.HasValue && pageSize.HasValue && page.Value > 0 && pageSize.Value > 0)

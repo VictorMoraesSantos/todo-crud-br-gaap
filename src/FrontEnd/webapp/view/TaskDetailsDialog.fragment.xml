@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog id="taskDetailsDialog" title="Detalhes da Tarefa" stretchOnPhone="true">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Label text="ID" />
+                <Text text="{tasks>/currentTask/id}" />
+
+                <Label text="Title" />
+                <Input value="{tasks>/currentTask/title}" />
+
+                <Label text="Completed" />
+                <CheckBox selected="{tasks>/currentTask/completed}" />
+
+                <Label text="User ID" />
+                <Input value="{tasks>/currentTask/userId}" />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Salvar" press="onDialogSave" />
+        </beginButton>
+        <endButton>
+            <Button text="Fechar" press="_closeDetailsDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,9 @@
+.taskCompleted {
+  color: #888888 !important;
+  text-decoration: line-through !important;
+}
+
+/* small responsive spacing for list items */
+.customListItemHBox {
+  width: 100%;
+}

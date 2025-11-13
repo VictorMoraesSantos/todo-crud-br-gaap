@@ -52,5 +52,20 @@ namespace task_crud.API.Controllers
             await _service.SyncAsync();
             return NoContent();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] IEnumerable<TodoDTO> dtos)
+        {
+            if (dtos == null || !dtos.Any()) return BadRequest("Nenhuma tarefa enviada.");
+            try
+            {
+                await _service.CreateRangeAsync(dtos);
+                return NoContent();
+            }
+            catch (DomainException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

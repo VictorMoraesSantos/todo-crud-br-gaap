@@ -1,0 +1,45 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "todo"
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "todo.view.TaskList",
+      "type": "XML",
+      "async": true
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.ui.core.routing.Router",
+        "viewType": "XML",
+        "viewPath": "todo.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "TaskList",
+          "target": "TaskList"
+        },
+        {
+          "pattern": "task/{taskId}",
+          "name": "TaskDetails",
+          "target": "TaskDetails"
+        }
+      ],
+      "targets": {
+        "TaskList": {
+          "viewName": "TaskList",
+          "viewLevel": 1
+        },
+        "TaskDetails": {
+          "viewName": "TaskDetails",
+          "viewLevel": 2
+        }
+      }
+    }
+  }
+}
