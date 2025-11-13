@@ -96,6 +96,45 @@ sap.ui.define(
           });
       },
 
+      onSync: function () {
+        var that = this;
+        var oModel = this.getView().getModel("tasks");
+        var pageSize = (oModel && oModel.getProperty("/pageSize")) || 10;
+        if (oModel) {
+          oModel.setProperty("/busy", true);
+        }
+
+        fetch(config.apiBase + "/api/todos/sync", {
+          method: "POST",
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.text().then(function (t) {
+                var err = new Error("Sync failed");
+                err.status = res.status;
+                err.body = t;
+                throw err;
+              });
+            }
+            return res.json().catch(function () {
+              return null;
+            });
+          })
+          .then(function () {
+            MessageToast.show("Sincronização concluída.");
+            that._loadTasks(1, pageSize);
+          })
+          .catch(function (err) {
+            MessageToast.show(
+              "Erro ao sincronizar: " +
+                (err && (err.status || err.message)
+                  ? err.status || err.message
+                  : "unknown")
+            );
+            that._loadTasks(1, pageSize);
+          });
+      },
+
       onSearch: function (oEvent) {
         var sQuery = oEvent.getParameter("newValue");
         var that = this;

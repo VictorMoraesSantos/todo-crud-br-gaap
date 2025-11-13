@@ -33,7 +33,7 @@ namespace task_crud.Infrastructure.Services
 
             var items = await _repository.GetAll(query.Page, query.PageSize, query.Title, query.Sort, query.Order);
             var pagedItems = await items.ToListAsync();
-            var dtos = pagedItems.Select(TodoMapper.ToDTO).Where(d => d != null).Select(d => d!).ToList();
+            var dtos = pagedItems.Select(TodoMapper.ToDTO).ToList();
 
             return new PagedResult<TodoDTO>(dtos, query.Page, query.PageSize);
         }
@@ -42,12 +42,7 @@ namespace task_crud.Infrastructure.Services
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            var entities = dto.Select(d =>
-            {
-                if (d == null) throw new ArgumentNullException(nameof(d));
-                if (string.IsNullOrWhiteSpace(d.Title)) throw new ArgumentException("Title is required.", nameof(d));
-                return TodoMapper.ToEntity(d);
-            });
+            var entities = dto.Select(d => TodoMapper.ToEntity(d));
 
             await _repository.CreateRange(entities);
         }
@@ -65,16 +60,13 @@ namespace task_crud.Infrastructure.Services
             }
 
             var entity = await _repository.GetById(id);
-            if (entity == null) return false;
+            if (entity == null)
+                return false;
 
             entity.Update(dto.UserId, dto.Title, dto.Completed);
             await _repository.Update(entity);
-            return true;
-        }
 
-        public async Task DeleteAsync(int id)
-        {
-            await _repository.Delete(id);
+            return true;
         }
 
         public async Task SyncAsync()
@@ -89,13 +81,7 @@ namespace task_crud.Infrastructure.Services
             var dtos = await JsonSerializer.DeserializeAsync<IEnumerable<TodoDTO?>>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (dtos == null) return;
 
-            var validDtos = dtos
-                .Where(d => d != null)
-                .ToList();
-
-            if (validDtos.Count == 0) return;
-
-            await CreateRangeAsync(validDtos);
+            await CreateRangeAsync(dtos);
         }
     }
 }

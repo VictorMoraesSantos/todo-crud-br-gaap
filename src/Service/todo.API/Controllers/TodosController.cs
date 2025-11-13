@@ -32,11 +32,10 @@ namespace task_crud.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateCompleted([FromRoute] int id, [FromBody] UpdateTodoDTO taskItem)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTodoDTO taskItem)
         {
             try
             {
-
                 var result = await _service.UpdateAsync(id, taskItem);
                 return NoContent();
             }
@@ -51,21 +50,6 @@ namespace task_crud.API.Controllers
         {
             await _service.SyncAsync();
             return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] IEnumerable<TodoDTO> dtos)
-        {
-            if (dtos == null || !dtos.Any()) return BadRequest("Nenhuma tarefa enviada.");
-            try
-            {
-                await _service.CreateRangeAsync(dtos);
-                return NoContent();
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
     }
 }

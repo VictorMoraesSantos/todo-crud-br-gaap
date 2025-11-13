@@ -7,7 +7,6 @@ namespace task_crud.Application.Contracts
         Task<TodoDTO?> GetByIdAsync(int id);
         Task<PagedResult<TodoDTO>> GetAllAsync(GetTodosQuery query);
         Task<bool> UpdateAsync(int id, UpdateTodoDTO dto);
-        Task DeleteAsync(int id);
         Task CreateRangeAsync(IEnumerable<TodoDTO> dto);
         Task SyncAsync();
     }
