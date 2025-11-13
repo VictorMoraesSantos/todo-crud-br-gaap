@@ -10,10 +10,14 @@ sap.ui.define(
 
     return Controller.extend("todo.controller.TaskDetails", {
       onInit: function () {
-        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-        oRouter
-          .getRoute("TaskDetails")
-          .attachPatternMatched(this._onObjectMatched, this);
+        try {
+          var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+          if (oRouter && oRouter.getRoute) {
+            oRouter
+              .getRoute("TaskDetails")
+              .attachPatternMatched(this._onObjectMatched, this);
+          }
+        } catch (e) {}
       },
 
       _onObjectMatched: function (oEvent) {
@@ -96,13 +100,56 @@ sap.ui.define(
             MessageToast.show("Tarefa salva com sucesso");
           })
           .catch(function (err) {
-            try {
-              console.error("onSave error:", err);
-            } catch (e) {}
             MessageToast.show(
               "O máximo de tarefas incompletas por usuário é 5."
             );
           });
+      },
+      onNavBack: function () {
+        try {
+          var oOwner = this.getOwnerComponent && this.getOwnerComponent();
+          var oApp;
+          if (oOwner && oOwner.byId) {
+            oApp = oOwner.byId("app");
+          }
+
+          if (!oApp) {
+            try {
+              oApp = this.getView && this.getView();
+              if (oApp) {
+                while (oApp && oApp.getParent && !oApp.isA("sap.m.App")) {
+                  oApp = oApp.getParent();
+                }
+                if (oApp && !oApp.isA("sap.m.App")) {
+                  oApp = null;
+                }
+              }
+            } catch (e) {
+              oApp = null;
+            }
+          }
+
+          if (oApp && oApp.back) {
+            try {
+              oApp.back();
+              return;
+            } catch (e) {}
+          }
+        } catch (e) {}
+
+        try {
+          var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+          if (oRouter) {
+            oRouter.navTo("TaskList");
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          if (window && window.history) {
+            window.history.back();
+          }
+        } catch (e) {}
       },
     });
   }

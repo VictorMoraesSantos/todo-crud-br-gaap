@@ -53,9 +53,6 @@ sap.ui.define(
             return response.json();
           })
           .then(function (data) {
-            try {
-              console.log("_loadTasks response:", data);
-            } catch (e) {}
             var items = [];
             if (Array.isArray(data)) {
               items = data;
@@ -231,34 +228,53 @@ sap.ui.define(
         }
         var oItem = oContext.getObject();
 
-        // set currentTask in model so the details view can bind to it
         var oModel = this.getView().getModel("tasks");
         oModel.setProperty("/currentTask", Object.assign({}, oItem));
 
-        // Try router navigation first (preserves URL), fallback to programmatic view creation
         try {
           var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
           if (oRouter) {
             oRouter.navTo("TaskDetails", { taskId: oItem.id });
-            return;
           }
         } catch (e) {}
 
-        // Fallback: create the TaskDetails view and navigate to it inside the App control
-        XMLView.create({ viewName: "todo.view.TaskDetails" }).then(function (
-          oView
-        ) {
-          var oApp = that.byId("app");
+        var oCompForView = that.getOwnerComponent && that.getOwnerComponent();
+        var p;
+        if (oCompForView && oCompForView.runAsOwner) {
           try {
-            // If the view is not already added, add and navigate to it
-            if (!oApp.indexOfPage || oApp.indexOfPage(oView) === -1) {
-              oApp.addPage(oView);
-            }
-            oApp.to(oView);
+            p = oCompForView.runAsOwner(function () {
+              return XMLView.create({ viewName: "todo.view.TaskDetails" });
+            });
           } catch (e) {
-            // fallback: place view directly
-            oView.placeAt("content");
+            p = XMLView.create({ viewName: "todo.view.TaskDetails" });
           }
+        } else {
+          p = XMLView.create({ viewName: "todo.view.TaskDetails" });
+        }
+
+        p.then(function (oView) {
+          try {
+            var sViewId = that.createId
+              ? that.createId("taskDetailsView")
+              : "taskDetailsView";
+            try {
+              oView.setId(sViewId);
+            } catch (e) {}
+
+            var oApp = that.byId("app");
+            if (oApp && oApp.indexOfPage && oApp.addPage) {
+              try {
+                if (oApp.indexOfPage(oView) === -1) {
+                  oApp.addPage(oView);
+                }
+                oApp.to(oView);
+                return;
+              } catch (e) {}
+            }
+          } catch (e) {}
+          try {
+            oView.placeAt("content");
+          } catch (e) {}
         });
       },
     });

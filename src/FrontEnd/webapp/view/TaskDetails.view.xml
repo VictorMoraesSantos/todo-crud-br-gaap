@@ -1,0 +1,34 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    controllerName="todo.controller.TaskDetails">
+
+    <Page title="{tasks>/currentTask/title}" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox fitContainer="true" class="sapUiSmallMargin">
+                    <VBox>
+                        <HBox class="responsiveRow" justifyContent="SpaceBetween" alignItems="Center">
+                            <Label text="Title" />
+                            <Input value="{tasks>/currentTask/title}" width="70%" />
+                        </HBox>
+
+                        <HBox class="responsiveRow" justifyContent="SpaceBetween" alignItems="Center">
+                            <Label text="Completed" />
+                            <CheckBox selected="{tasks>/currentTask/completed}" />
+                        </HBox>
+
+                        <HBox class="responsiveRow" justifyContent="SpaceBetween" alignItems="Center">
+                            <Label text="User" />
+                            <Text text="{tasks>/currentTask/userId}" />
+                        </HBox>
+                    </VBox>
+
+                <HBox justifyContent="End" class="sapUiSmallMarginTop">
+                    <Button text="Save" press="onSave" type="Emphasized" />
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>

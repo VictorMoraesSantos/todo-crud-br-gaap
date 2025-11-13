@@ -17,16 +17,22 @@
                 busyIndicatorDelay="0">
                 <items>
                     <CustomListItem>
-                        <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-                            <HBox fitContainer="true" alignItems="Center" width="100%">
-                                <CheckBox selected="{tasks>completed}" select="onToggleCompleted" />
-                                <Text text="{tasks>title}" wrapping="false" class="{= ${tasks>completed} ? 'taskCompleted' : '' }" />
+                        <HBox class="customListItemHBox" justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                                <HBox class="taskMain" fitContainer="true" alignItems="Center" width="100%">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" shrinkFactor="1" />
+                                    </layoutData>
+                                    <CheckBox selected="{tasks>completed}" select="onToggleCompleted" />
+                                    <Text text="{tasks>title}" wrapping="true" class="taskTitle {= ${tasks>completed} ? 'taskCompleted' : '' }" />
+                                </HBox>
+                                <HBox class="taskActions">
+                                    <layoutData>
+                                        <FlexItemData growFactor="0" shrinkFactor="0" />
+                                    </layoutData>
+                                    <Text text="{= 'User: ' + ${tasks>userId}}" />
+                                    <Button text="Details" press="onDetails" />
+                                </HBox>
                             </HBox>
-                            <HBox>
-                                <Text text="{= 'User: ' + ${tasks>userId}}" />
-                                <Button text="Details" press="onDetails" />
-                            </HBox>
-                        </HBox>
                     </CustomListItem>
                 </items>
             </List>
